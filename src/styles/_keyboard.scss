@@ -1,0 +1,50 @@
+@use "base";
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(20, minmax(auto, 1.25em));
+  grid-auto-rows: 3em;
+  gap: 0.25em;
+  justify-content: center;
+}
+
+.key {
+  font-size: inherit;
+  grid-column: span 2;
+  border: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: base.$color-tone-2;
+  color: base.$color-tone-1;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+  > svg {
+    width: 1.75em;
+    height: 1.75em;
+  }
+
+  &.large {
+    grid-column: span 3;
+  }
+
+  &.wrong {
+    background-color: darken(base.$color-tone-2, 23);
+  }
+
+  &.wrong-location {
+    background-color: base.$yellow;
+  }
+
+  &.correct {
+    background-color: base.$green;
+  }
+
+  &:hover,
+  &:focus {
+    filter: brightness(115%);
+  }
+}
