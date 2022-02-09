@@ -5,9 +5,7 @@ const KeyButton = ({ keyLatter, keyType }) => {
   return (
     <button
       className={
-        keyType === "enter" || keyType === "backspace"
-          ? "key large"
-          : "key wrong-location"
+        keyType === "enter" || keyType === "backspace" ? "key large" : "key"
       }
       // data-key={keyType}
     >

@@ -13,7 +13,9 @@ const KeysRow = ({ keys }) => {
     } else {
       keyType = "letter";
     }
-    renderedRow.push(<KeyButton keyLatter={keys[i]} keyType={keyType} />);
+    renderedRow.push(
+      <KeyButton keyLatter={keys[i]} keyType={keyType} key={i} />
+    );
   }
 
   return <>{renderedRow}</>;
