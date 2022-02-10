@@ -28,4 +28,19 @@
   justify-content: center;
   align-items: center;
   user-select: none;
+  &.active {
+    border-color: lighten(base.$color-tone-3, 23);
+  }
+  &.correct {
+    background-color: base.$green;
+    border: none;
+  }
+  &.wrong-location {
+    background-color: base.$yellow;
+    border: none;
+  }
+  &.wrong {
+    background-color: base.$color-tone-4;
+    border: none;
+  }
 }

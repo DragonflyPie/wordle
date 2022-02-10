@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import BoardRow from "./BoardRow";
 
 const Board = () => {
+  const word = "there";
   const [activeRow, setActiveRow] = useState(0);
   const [guesses, setGuesses] = useState({
     0: "",
@@ -11,14 +12,45 @@ const Board = () => {
     4: "",
     5: "",
   });
+  const [rowCorrectness, setrowCorrectness] = useState({
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+  });
 
-  const submitRow = () => {
+  const submitRow = (currentRaw) => {
+    let currentGuess = guesses[currentRaw];
+
+    let currentRowCorrectness = [
+      "unknown",
+      "unknown",
+      "unknown",
+      "unknown",
+      "unknown",
+    ];
+
+    for (let i = 0; i < 5; i++) {
+      if (currentGuess[i] === word[i]) {
+        currentRowCorrectness[i] = "correct";
+      } else if (word.includes(currentGuess[i])) {
+        currentRowCorrectness[i] = "wrong-location";
+      } else {
+        currentRowCorrectness[i] = "wrong";
+      }
+      setrowCorrectness({
+        ...rowCorrectness,
+        [currentRaw]: currentRowCorrectness,
+      });
+    }
     setActiveRow(activeRow + 1);
   };
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       if (guesses[activeRow].length === 5) {
-        submitRow();
+        submitRow(activeRow);
       }
       return;
     } else if (e.key === "Backspace" || e.key === "Delete") {
@@ -46,7 +78,14 @@ const Board = () => {
   let rows = [];
 
   for (let i = 0; i < 6; i++) {
-    rows.push(<BoardRow key={i} values={guesses[i]} />);
+    rows.push(
+      <BoardRow
+        key={i}
+        values={guesses[i]}
+        correctness={rowCorrectness[i]}
+        active={activeRow === i ? "active" : ""}
+      />
+    );
   }
 
   return <div className="board">{rows}</div>;
