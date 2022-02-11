@@ -1,7 +1,7 @@
 import React from "react";
 import BoardSquare from "./BoardSquare";
 
-const BoardRow = ({ values, correctness, active }) => {
+const BoardRow = ({ values, correctness, active, alertState }) => {
   let squares = [];
   for (let i = 0; i < 5; i++) {
     squares.push(
@@ -10,6 +10,7 @@ const BoardRow = ({ values, correctness, active }) => {
         value={values[i]}
         correctness={correctness[i]}
         active={active}
+        alertState={alertState}
       />
     );
   }

@@ -1,5 +1,26 @@
 @use "base";
 
+@keyframes shake {
+  10% {
+    transform: translateX(-5%);
+  }
+  30% {
+    transform: translateX(5%);
+  }
+  50% {
+    transform: translateX(-7.5%);
+  }
+  70% {
+    transform: translateX(7.5%);
+  }
+  90% {
+    transform: translateX(-5%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 .board {
   display: flex;
   flex-direction: column;
@@ -30,6 +51,9 @@
   user-select: none;
   &.active {
     border-color: lighten(base.$color-tone-3, 23);
+    &.shake {
+      animation: shake 250ms ease-in-out;
+    }
   }
   &.correct {
     background-color: base.$green;

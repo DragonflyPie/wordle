@@ -1,0 +1,24 @@
+@use "base";
+
+.alert {
+  position: fixed;
+  top: 20vh;
+  left: 50vw;
+  transform: translate(-50%);
+  background-color: base.$color-tone-1;
+  color: base.$black;
+  padding: 0.5em 0.75em;
+  opacity: 1;
+  border-radius: 0.25em;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  transition: opacity 500ms ease-in-out;
+
+  &.hide {
+    // transition: opacity 500ms ease-in-out;
+    opacity: 0;
+  }
+}

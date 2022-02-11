@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import BoardRow from "./BoardRow";
 import { randomWord, checkWord } from "../api/backend";
+import Alert from "./Alert";
 
 const Board = () => {
+  const delay = 1;
   const [word, setWord] = useState("");
   const [activeRow, setActiveRow] = useState(0);
   const [guesses, setGuesses] = useState({
@@ -22,60 +24,89 @@ const Board = () => {
     5: [],
   });
 
+  const [alertState, setAlertState] = useState("hide");
+  const [alertText, setAlertText] = useState("");
+
   useEffect(() => {
     setWord(randomWord);
   }, []);
 
-  const submitRow = (currentRaw) => {
-    let currentGuess = guesses[currentRaw];
-    if (!checkWord(currentGuess)) {
-      alert("wrong");
-    } else {
-      let currentRowCorrectness = [
-        "unknown",
-        "unknown",
-        "unknown",
-        "unknown",
-        "unknown",
-      ];
+  useEffect(() => {
+    let alerTimer = setTimeout(() => setAlertState("hide"), delay * 1000);
+    return () => {
+      clearTimeout(alerTimer);
+    };
+    // let time = 2000;
+    // setTimeout(() => {
+    //   setAlertState("hide");
+    // }, time);
+    // clearTimeout();
+  }, [alertState]);
 
-      for (let i = 0; i < 5; i++) {
-        if (currentGuess[i] === word[i]) {
-          currentRowCorrectness[i] = "correct";
-        } else if (word.includes(currentGuess[i])) {
-          currentRowCorrectness[i] = "wrong-location";
-        } else {
-          currentRowCorrectness[i] = "wrong";
+  const submitRow = useCallback(
+    (currentRaw) => {
+      let currentGuess = guesses[currentRaw];
+      if (!checkWord(currentGuess)) {
+        setAlertState("wrong");
+        setAlertText("Not in word list");
+      } else {
+        let currentRowCorrectness = [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+        ];
+
+        for (let i = 0; i < 5; i++) {
+          if (currentGuess[i] === word[i]) {
+            currentRowCorrectness[i] = "correct";
+          } else if (word.includes(currentGuess[i])) {
+            currentRowCorrectness[i] = "wrong-location";
+          } else {
+            currentRowCorrectness[i] = "wrong";
+          }
+          setrowCorrectness({
+            ...rowCorrectness,
+            [currentRaw]: currentRowCorrectness,
+          });
         }
-        setrowCorrectness({
-          ...rowCorrectness,
-          [currentRaw]: currentRowCorrectness,
-        });
+        setActiveRow(activeRow + 1);
       }
-      setActiveRow(activeRow + 1);
-    }
-  };
+    },
+    [activeRow, guesses, rowCorrectness, word]
+  );
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      if (guesses[activeRow].length === 5) {
-        submitRow(activeRow);
-      }
-      return;
-    } else if (e.key === "Backspace" || e.key === "Delete") {
-      setGuesses({ ...guesses, [activeRow]: guesses[activeRow].slice(0, -1) });
-    } else if (e.key.match(/^[a-z]$/)) {
-      if (guesses[activeRow].length < 5) {
+  const handleKeyPress = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        if (guesses[activeRow].length === 5) {
+          submitRow(activeRow);
+          return;
+        } else {
+          setAlertState("short");
+          setAlertText("Not enough letters");
+          return;
+        }
+      } else if (e.key === "Backspace" || e.key === "Delete") {
         setGuesses({
           ...guesses,
-          [activeRow]: guesses[activeRow] + e.key,
+          [activeRow]: guesses[activeRow].slice(0, -1),
         });
+      } else if (e.key.match(/^[a-z]$/)) {
+        if (guesses[activeRow].length < 5) {
+          setGuesses({
+            ...guesses,
+            [activeRow]: guesses[activeRow] + e.key,
+          });
+        }
+        return;
+      } else {
+        return;
       }
-      return;
-    } else {
-      return;
-    }
-  };
+    },
+    [activeRow, guesses, submitRow]
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
@@ -93,11 +124,17 @@ const Board = () => {
         values={guesses[i]}
         correctness={rowCorrectness[i]}
         active={activeRow === i ? "active" : ""}
+        alertState={alertState !== "hide" ? true : false}
       />
     );
   }
 
-  return <div className="board">{rows}</div>;
+  return (
+    <div className="board">
+      <Alert alertState={alertState} text={alertText} />
+      {rows}
+    </div>
+  );
 };
 
 export default Board;
