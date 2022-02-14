@@ -4,8 +4,9 @@ import KeyBoard2 from "./KeyBoard";
 import { randomWord, checkWord } from "../api/backend";
 
 const Game = () => {
+  const [finished, setFinished] = useState(false);
   const [revealed, setRevealed] = useState({});
-  const delay = 1;
+  const [delay, setDelay] = useState(1);
   const [word, setWord] = useState("");
   const [activeRow, setActiveRow] = useState(0);
   const [guesses, setGuesses] = useState({
@@ -37,10 +38,18 @@ const Game = () => {
     return () => {
       clearTimeout(alertTimer);
     };
-  }, [alertState]);
+  }, [alertState, delay]);
 
+  useEffect(() => {
+    if (activeRow === 6) {
+      setDelay(5);
+      setAlertState("over");
+      setAlertText(word);
+    }
+  }, [activeRow, word, delay]);
   const submitRow = (currentRow) => {
     let currentGuess = guesses[currentRow];
+
     if (!checkWord(currentGuess)) {
       setAlertState("wrong");
       setAlertText("Not in word list");
@@ -73,35 +82,41 @@ const Game = () => {
         });
         setRevealed(currentRevealed);
       }
+      if (currentGuess === word) {
+        setFinished(true);
+        return;
+      }
       setActiveRow(activeRow + 1);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key.toLowerCase() === "enter") {
-      if (guesses[activeRow].length === 5) {
-        submitRow(activeRow);
-        return;
-      } else {
-        setAlertState("short");
-        setAlertText("Not enough letters");
-        return;
-      }
-    } else if (e.key.toLowerCase() === "backspace" || e.key === "Delete") {
-      setGuesses({
-        ...guesses,
-        [activeRow]: guesses[activeRow].slice(0, -1),
-      });
-    } else if (e.key.match(/^[a-z]$/)) {
-      if (guesses[activeRow].length < 5) {
+    if (!finished) {
+      if (e.key.toLowerCase() === "enter") {
+        if (guesses[activeRow].length === 5) {
+          submitRow(activeRow);
+          return;
+        } else {
+          setAlertState("short");
+          setAlertText("Not enough letters");
+          return;
+        }
+      } else if (e.key.toLowerCase() === "backspace" || e.key === "Delete") {
         setGuesses({
           ...guesses,
-          [activeRow]: guesses[activeRow] + e.key,
+          [activeRow]: guesses[activeRow].slice(0, -1),
         });
+      } else if (e.key.match(/^[a-z]$/)) {
+        if (guesses[activeRow].length < 5) {
+          setGuesses({
+            ...guesses,
+            [activeRow]: guesses[activeRow] + e.key,
+          });
+        }
+        return;
+      } else {
+        return;
       }
-      return;
-    } else {
-      return;
     }
   };
 
