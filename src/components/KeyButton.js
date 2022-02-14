@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { MdOutlineBackspace } from "react-icons/md";
 
-const KeyButton = ({ keyLetter, revealed }) => {
+const KeyButton = ({ keyLetter, revealed, handleClick }) => {
   return (
     <button
+      onClick={() => handleClick({ key: keyLetter })}
       className={`key${
         keyLetter === "enter" || keyLetter === "backspace" ? " large" : ""
       }${revealed.hasOwnProperty(keyLetter) ? ` ${revealed[keyLetter]}` : ""}`}
