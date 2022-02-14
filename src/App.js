@@ -1,12 +1,11 @@
 import "./App.scss";
-import Board from "./components/Board";
-import Keyboard from "./components/Keyboard";
+
+import Game from "./components/Game";
 
 function App() {
   return (
     <div className="App">
-      <Board />
-      <Keyboard />
+      <Game />
     </div>
   );
 }

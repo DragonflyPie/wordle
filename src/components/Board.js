@@ -3,7 +3,7 @@ import BoardRow from "./BoardRow";
 import { randomWord, checkWord } from "../api/backend";
 import Alert from "./Alert";
 
-const Board = () => {
+const Board = ({ revealed, setRevealed }) => {
   const delay = 1;
   const [word, setWord] = useState("");
   const [activeRow, setActiveRow] = useState(0);
@@ -26,15 +26,17 @@ const Board = () => {
 
   const [alertState, setAlertState] = useState("hide");
   const [alertText, setAlertText] = useState("");
+  // const [revealed, setRevealed] = useState({});
 
   useEffect(() => {
     setWord(randomWord);
+    // console.log(setRevealed, revealed);
   }, []);
 
   useEffect(() => {
-    let alerTimer = setTimeout(() => setAlertState("hide"), delay * 1000);
+    let alertTimer = setTimeout(() => setAlertState("hide"), delay * 1000);
     return () => {
-      clearTimeout(alerTimer);
+      clearTimeout(alertTimer);
     };
     // let time = 2000;
     // setTimeout(() => {
@@ -57,19 +59,26 @@ const Board = () => {
           "unknown",
           "unknown",
         ];
+        let currentRevealed = revealed;
 
         for (let i = 0; i < 5; i++) {
           if (currentGuess[i] === word[i]) {
             currentRowCorrectness[i] = "correct";
+            currentRevealed[currentGuess[i]] = "correct";
           } else if (word.includes(currentGuess[i])) {
+            if (!currentRevealed.hasOwnProperty(currentGuess[i])) {
+              currentRevealed[currentGuess[i]] = "wrong-location";
+            }
             currentRowCorrectness[i] = "wrong-location";
           } else {
             currentRowCorrectness[i] = "wrong";
+            currentRevealed[currentGuess[i]] = "wrong";
           }
           setrowCorrectness({
             ...rowCorrectness,
             [currentRaw]: currentRowCorrectness,
           });
+          setRevealed(currentRevealed);
         }
         setActiveRow(activeRow + 1);
       }

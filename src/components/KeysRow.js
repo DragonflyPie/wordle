@@ -1,24 +1,12 @@
 import React from "react";
 import KeyButton from "./KeyButton";
 
-const KeysRow = ({ keys }) => {
-  const renderedRow = [];
-  let keyType;
+const KeysRow = ({ keys, revealed }) => {
+  const row = keys.map((symbol) => {
+    return <KeyButton key={symbol} keyLetter={symbol} revealed={revealed} />;
+  });
 
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i] === "enter") {
-      keyType = "enter";
-    } else if (keys[i] === "backspace") {
-      keyType = "backspace";
-    } else {
-      keyType = "letter";
-    }
-    renderedRow.push(
-      <KeyButton keyLatter={keys[i]} keyType={keyType} key={i} />
-    );
-  }
-
-  return <>{renderedRow}</>;
+  return <>{row}</>;
 };
 
 export default KeysRow;

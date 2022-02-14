@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import KeysRow from "./KeysRow";
 
-const Keyboard = () => {
-  const keys = [
+const KeyBoard = ({ revealed }) => {
+  const [keys, setKeys] = useState([
     "q",
     "w",
     "e",
@@ -31,17 +31,20 @@ const Keyboard = () => {
     "n",
     "m",
     "backspace",
-  ];
+  ]);
+  useEffect(() => {
+    setKeys([...keys]);
+  }, [revealed, keys]);
 
   return (
     <div className="keyboard">
-      <KeysRow keys={keys.slice(0, 10)}></KeysRow>
+      <KeysRow keys={keys.slice(0, 10)} revealed={revealed}></KeysRow>
       <div className="space"></div>
-      <KeysRow keys={keys.slice(10, 19)}></KeysRow>
+      <KeysRow keys={keys.slice(10, 19)} revealed={revealed}></KeysRow>
       <div className="space"></div>
-      <KeysRow keys={keys.slice(19)}></KeysRow>
+      <KeysRow keys={keys.slice(19)} revealed={revealed}></KeysRow>
     </div>
   );
 };
 
-export default Keyboard;
+export default KeyBoard;
